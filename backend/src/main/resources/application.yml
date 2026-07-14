@@ -1,0 +1,61 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: codeinsight
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/codeinsight?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# JWT
+jwt:
+  secret: codeinsight-jwt-secret-key-must-be-at-least-256-bits-long
+  expiration: 86400000  # 24 小时
+
+# AI
+ai:
+  deepseek:
+    api-key: ${DEEPSEEK_API_KEY:your-api-key-here}
+    model: deepseek-chat
+    base-url: https://api.deepseek.com/v1
+
+  openai:
+    api-key: ${OPENAI_API_KEY:your-api-key-here}
+    model: gpt-4o
+
+  # 默认使用的 AI 提供商: deepseek / openai
+  provider: deepseek
+
+# 仓库存储
+repository:
+  base-path: ./repositories
+
+# 日志
+logging:
+  level:
+    com.codeinsight: debug
