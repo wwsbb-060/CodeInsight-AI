@@ -1,5 +1,6 @@
 package com.codeinsight.service;
 
+import com.codeinsight.dto.QaResponse;
 import dev.langchain4j.data.segment.TextSegment;
 
 import java.util.List;
@@ -24,4 +25,9 @@ public interface KnowledgeBaseService {
      * 语义检索：返回与查询最相关的代码片段
      */
     List<TextSegment> search(Long repositoryId, String query, int maxResults);
+
+    /**
+     * RAG 问答：检索相关代码 → 拼装 Prompt → LLM 生成回答
+     */
+    QaResponse qa(Long repositoryId, String question);
 }

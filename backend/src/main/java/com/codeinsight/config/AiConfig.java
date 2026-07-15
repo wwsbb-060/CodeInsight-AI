@@ -68,6 +68,7 @@ public class AiConfig {
                 .baseUrl(deepseekBaseUrl)
                 .apiKey(deepseekApiKey)
                 .modelName(embeddingModel)
+                .timeout(Duration.ofSeconds(60))
                 .build();
     }
 

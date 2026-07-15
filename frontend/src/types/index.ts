@@ -66,6 +66,29 @@ export interface CreateReviewRequest {
   repositoryId: number;
 }
 
+// ===== Q&A =====
+export interface QaRequest {
+  question: string;
+}
+
+export interface QaReference {
+  file: string;
+  startLine: number;
+  endLine: number;
+  snippet: string;
+}
+
+export interface QaResponse {
+  answer: string;
+  references: QaReference[];
+}
+
+export interface ChatMessage {
+  role: 'user' | 'ai';
+  content: string;
+  references?: QaReference[];
+}
+
 // ===== 路由 =====
 export interface UserInfo {
   username: string;

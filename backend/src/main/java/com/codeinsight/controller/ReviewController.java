@@ -1,9 +1,12 @@
 package com.codeinsight.controller;
 
 import com.codeinsight.common.Result;
+import com.codeinsight.dto.QaRequest;
+import com.codeinsight.dto.QaResponse;
 import com.codeinsight.dto.ReviewRequest;
 import com.codeinsight.entity.Review;
 import com.codeinsight.security.SecurityUser;
+import com.codeinsight.service.KnowledgeBaseService;
 import com.codeinsight.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.util.Map;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final KnowledgeBaseService knowledgeBaseService;
 
     @PostMapping
     public Result<Review> create(@Valid @RequestBody ReviewRequest request,
@@ -64,5 +68,22 @@ public class ReviewController {
                                    @RequestBody Map<String, String> body) {
         reviewService.updateMemo(id, user.getUserId(), body.get("memo"));
         return Result.success();
+    }
+
+    // ===== Q&A =====
+
+    @PostMapping("/{id}/qa")
+    public Result<QaResponse> ask(@PathVariable Long id,
+                                  @Valid @RequestBody QaRequest request,
+                                  @AuthenticationPrincipal SecurityUser user) {
+        Review review = reviewService.getById(id, user.getUserId());
+        return Result.success(knowledgeBaseService.qa(review.getRepositoryId(), request.getQuestion()));
+    }
+
+    @GetMapping("/{id}/qa/ready")
+    public Result<Boolean> isQaReady(@PathVariable Long id,
+                                     @AuthenticationPrincipal SecurityUser user) {
+        Review review = reviewService.getById(id, user.getUserId());
+        return Result.success(knowledgeBaseService.isReady(review.getRepositoryId()));
     }
 }

@@ -4,6 +4,7 @@ import { ArrowLeftOutlined, DownloadOutlined } from '@ant-design/icons';
 import { useReview } from '@/hooks/useReview';
 import { getReviewReport } from '@/api/review';
 import MarkdownViewer from '@/components/MarkdownViewer';
+import ChatPanel from '@/components/ChatPanel';
 
 const { Text } = Typography;
 
@@ -91,7 +92,10 @@ export default function ReportPage() {
 
       {/* 已完成 — 渲染报告 */}
       {review.status === 'COMPLETED' && (
-        <MarkdownViewer content={review.reportMarkdown ?? '*暂无报告内容*'} />
+        <>
+          <MarkdownViewer content={review.reportMarkdown ?? '*暂无报告内容*'} />
+          <ChatPanel reviewId={reviewId} />
+        </>
       )}
     </>
   );
