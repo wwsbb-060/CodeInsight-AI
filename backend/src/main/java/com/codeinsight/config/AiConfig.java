@@ -38,6 +38,12 @@ public class AiConfig {
     @Value("${ai.embedding.model}")
     private String embeddingModel;
 
+    @Value("${ai.embedding.api-key}")
+    private String embeddingApiKey;
+
+    @Value("${ai.embedding.base-url}")
+    private String embeddingBaseUrl;
+
     /**
      * 当前激活的 LLM 客户端
      */
@@ -65,8 +71,8 @@ public class AiConfig {
     @Bean
     public EmbeddingModel embeddingModel() {
         return OpenAiEmbeddingModel.builder()
-                .baseUrl(deepseekBaseUrl)
-                .apiKey(deepseekApiKey)
+                .baseUrl(embeddingBaseUrl)
+                .apiKey(embeddingApiKey)
                 .modelName(embeddingModel)
                 .timeout(Duration.ofSeconds(60))
                 .build();

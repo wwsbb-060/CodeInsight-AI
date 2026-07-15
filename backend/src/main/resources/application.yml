@@ -48,9 +48,11 @@ ai:
     api-key: ${OPENAI_API_KEY:your-api-key-here}
     model: gpt-4o
 
-  # Embedding 模型
+  # Embedding（阿里百炼，OpenAI 兼容格式）
   embedding:
-    model: deepseek-chat
+    api-key: ${EMBEDDING_API_KEY:your-embedding-api-key}
+    model: text-embedding-v2
+    base-url: https://ws-crk8jnie4gdq2fho.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
 
   # 默认使用的 AI 提供商: deepseek / openai
   provider: deepseek
