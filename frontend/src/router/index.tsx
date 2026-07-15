@@ -5,6 +5,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 import DashboardPage from '@/pages/DashboardPage';
+import WorkspacePage from '@/pages/WorkspacePage';
 import ReportsPage from '@/pages/ReportsPage';
 import ReportPage from '@/pages/ReportPage';
 
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: '/dashboard', element: <DashboardPage /> },
+      { path: '/workspace', element: <WorkspacePage /> },
       { path: '/reports', element: <ReportsPage /> },
       { path: '/reports/:id', element: <ReportPage /> },
     ],

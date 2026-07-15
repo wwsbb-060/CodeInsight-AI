@@ -2,6 +2,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Layout, Menu, Button, Dropdown } from 'antd';
 import {
   DashboardOutlined,
+  AppstoreOutlined,
   FileTextOutlined,
   CodeOutlined,
   LogoutOutlined,
@@ -12,7 +13,8 @@ import { getUser, useLogout } from '@/hooks/useAuth';
 const { Header, Sider, Content } = Layout;
 
 const menuItems = [
-  { key: '/dashboard', icon: <DashboardOutlined />, label: '工作台' },
+  { key: '/dashboard', icon: <DashboardOutlined />, label: '仪表盘' },
+  { key: '/workspace', icon: <AppstoreOutlined />, label: '工作台' },
   { key: '/reports', icon: <FileTextOutlined />, label: '分析报告' },
 ];
 
@@ -23,7 +25,8 @@ export default function AppLayout() {
   const user = getUser();
 
   const selectedKey = (() => {
-    if (location.pathname.startsWith('/report')) return '/reports';
+    if (location.pathname.startsWith('/reports/') || location.pathname === '/reports') return '/reports';
+    if (location.pathname.startsWith('/workspace')) return '/workspace';
     return location.pathname;
   })();
 

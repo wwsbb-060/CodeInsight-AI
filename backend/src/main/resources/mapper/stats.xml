@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stats">
+
+    <select id="totalRepos" resultType="int" parameterType="long">
+        SELECT COUNT(*) FROM repository WHERE user_id = #{userId}
+    </select>
+
+    <select id="totalReviews" resultType="int" parameterType="long">
+        SELECT COUNT(*) FROM review WHERE user_id = #{userId}
+    </select>
+
+    <select id="monthReviews" resultType="int" parameterType="long">
+        SELECT COUNT(*) FROM review
+        WHERE user_id = #{userId}
+          AND YEAR(created_at) = YEAR(CURDATE())
+          AND MONTH(created_at) = MONTH(CURDATE())
+    </select>
+
+    <select id="totalTokens" resultType="int" parameterType="long">
+        SELECT COALESCE(SUM(token_used), 0) FROM review WHERE user_id = #{userId}
+    </select>
+
+    <select id="tokenTrend" resultType="map" parameterType="long">
+        SELECT DATE(created_at) as date, SUM(token_used) as tokens
+        FROM review
+        WHERE user_id = #{userId}
+          AND created_at > DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+          AND status = 'COMPLETED'
+        GROUP BY DATE(created_at)
+        ORDER BY date
+    </select>
+
+    <select id="recentActivity" resultType="map" parameterType="long">
+        SELECT r.id, r.repository_id as repositoryId, r.status, r.ai_model as aiModel,
+               r.token_used as tokenUsed, r.created_at as createdAt, r.error_msg as errorMsg,
+               repo.name as repoName
+        FROM review r
+        LEFT JOIN repository repo ON r.repository_id = repo.id
+        WHERE r.user_id = #{userId}
+        ORDER BY r.created_at DESC
+        LIMIT 5
+    </select>
+
+</mapper>
