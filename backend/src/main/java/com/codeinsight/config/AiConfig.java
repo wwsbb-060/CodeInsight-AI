@@ -1,7 +1,9 @@
 package com.codeinsight.config;
 
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +35,9 @@ public class AiConfig {
     @Value("${ai.openai.model}")
     private String openaiModel;
 
+    @Value("${ai.embedding.model}")
+    private String embeddingModel;
+
     /**
      * 当前激活的 LLM 客户端
      */
@@ -50,6 +55,19 @@ public class AiConfig {
                 .apiKey(deepseekApiKey)
                 .modelName(deepseekModel)
                 .timeout(Duration.ofSeconds(120))
+                .build();
+    }
+
+    /**
+     * Embedding 模型，用于代码文本向量化。
+     * 使用 DeepSeek 兼容的 OpenAI Embedding 接口。
+     */
+    @Bean
+    public EmbeddingModel embeddingModel() {
+        return OpenAiEmbeddingModel.builder()
+                .baseUrl(deepseekBaseUrl)
+                .apiKey(deepseekApiKey)
+                .modelName(embeddingModel)
                 .build();
     }
 

@@ -17,6 +17,7 @@ public class AsyncReviewExecutor {
 
     private final ReviewMapper reviewMapper;
     private final AiReviewEngine aiReviewEngine;
+    private final KnowledgeBaseService knowledgeBaseService;
 
     @Async
     public void execute(Review review) {
@@ -34,6 +35,13 @@ public class AsyncReviewExecutor {
             review.setTokenUsed(result.tokenUsed);
             review.setCompletedAt(LocalDateTime.now());
             safeUpdate(review, "COMPLETED");
+
+            // 评审完成后异步构建知识库
+            try {
+                knowledgeBaseService.build(review.getRepositoryId());
+            } catch (Exception e) {
+                log.error("知识库构建失败: repoId={}", review.getRepositoryId(), e);
+            }
 
             log.info("AI 评审完成: reviewId={}, model={}, tokenUsed={}",
                     review.getId(), result.model, result.tokenUsed);

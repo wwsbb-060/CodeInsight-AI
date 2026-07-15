@@ -48,6 +48,10 @@ ai:
     api-key: ${OPENAI_API_KEY:your-api-key-here}
     model: gpt-4o
 
+  # Embedding 模型
+  embedding:
+    model: deepseek-chat
+
   # 默认使用的 AI 提供商: deepseek / openai
   provider: deepseek
 
