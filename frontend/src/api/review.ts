@@ -24,3 +24,7 @@ export function updateMemo(id: number, memo: string): Promise<ApiResult<null>> {
 export function getReviewReport(id: number): Promise<string> {
   return client.get(`/reviews/${id}/report`, { responseType: 'text' }) as unknown as Promise<string>;
 }
+
+export function getReviewReportPdf(id: number): Promise<Blob> {
+  return client.get(`/reviews/${id}/report/pdf`, { responseType: 'blob' }) as unknown as Promise<Blob>;
+}

@@ -26,6 +26,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final KnowledgeBaseService knowledgeBaseService;
+    private final com.codeinsight.service.PdfService pdfService;
 
     @PostMapping
     public Result<Review> create(@Valid @RequestBody ReviewRequest request,
@@ -53,6 +54,18 @@ public class ReviewController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.md")
                 .contentType(MediaType.TEXT_MARKDOWN)
                 .body(markdown.getBytes(StandardCharsets.UTF_8));
+    }
+
+    @GetMapping("/{id}/report/pdf")
+    public ResponseEntity<byte[]> getReportPdf(@PathVariable Long id,
+                                               @AuthenticationPrincipal SecurityUser user) {
+        String markdown = reviewService.getReportMarkdown(id, user.getUserId());
+        byte[] pdfBytes = pdfService.markdownToPdf(markdown);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 
     @DeleteMapping("/{id}")

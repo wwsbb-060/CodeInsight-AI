@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Result, Space, Typography, Tag, Spin } from 'antd';
-import { ArrowLeftOutlined, DownloadOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, DownloadOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useReview } from '@/hooks/useReview';
-import { getReviewReport } from '@/api/review';
+import { getReviewReport, getReviewReportPdf } from '@/api/review';
 import MarkdownViewer from '@/components/MarkdownViewer';
 import ChatPanel from '@/components/ChatPanel';
 
@@ -30,6 +30,20 @@ export default function ReportPage() {
       const a = document.createElement('a');
       a.href = url;
       a.download = `code-review-report-${reviewId}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handlePdfDownload = async () => {
+    try {
+      const blob = await getReviewReportPdf(reviewId);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `code-review-report-${reviewId}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch {
@@ -76,9 +90,14 @@ export default function ReportPage() {
         </Space>
 
         {review.status === 'COMPLETED' && (
-          <Button icon={<DownloadOutlined />} onClick={handleDownload}>
-            下载 Markdown
-          </Button>
+          <Space>
+            <Button icon={<DownloadOutlined />} onClick={handleDownload}>
+              Markdown
+            </Button>
+            <Button icon={<FilePdfOutlined />} onClick={handlePdfDownload}>
+              PDF
+            </Button>
+          </Space>
         )}
       </div>
 

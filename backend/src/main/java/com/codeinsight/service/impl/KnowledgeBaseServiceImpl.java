@@ -108,10 +108,8 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService {
         // 1. 检索 Top-5 相关代码块
         List<EmbeddingMatch<TextSegment>> matches = searchMatches(repositoryId, question, 5);
         if (matches.isEmpty()) {
-            QaResponse resp = new QaResponse();
-            resp.setAnswer("未找到与问题相关的代码片段，请尝试换个问法。");
-            resp.setReferences(List.of());
-            return resp;
+            // 兜底：降低阈值再试一次
+            matches = searchMatches(repositoryId, question, 5, 0.3);
         }
 
         // 2. 拼装 Prompt
@@ -126,9 +124,11 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService {
             refs.add(parseReference(text));
         }
 
-        String prompt = "你是一位代码分析助手。请根据以下代码片段回答用户的问题。\n" +
-                "如果代码片段不足以回答问题，请如实说明。\n" +
-                "回答时尽量引用具体的文件名和行号。\n\n" +
+        String prompt = "你是代码分析助手。回答要求：\n" +
+                "- 简洁直接，不要长篇大论\n" +
+                "- 基于提供的代码片段回答，引用文件名和行号\n" +
+                "- 如果代码片段只能部分回答问题，先回答能答的部分，再说缺少什么\n" +
+                "- 如果问题与代码无关（如聊目录结构），根据代码片段里的文件路径推断并回答\n\n" +
                 "## 相关代码\n\n" + context + "\n" +
                 "## 用户问题\n\n" + question;
 
@@ -142,6 +142,11 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService {
     }
 
     private List<EmbeddingMatch<TextSegment>> searchMatches(Long repositoryId, String query, int maxResults) {
+        return searchMatches(repositoryId, query, maxResults, 0.6);
+    }
+
+    private List<EmbeddingMatch<TextSegment>> searchMatches(Long repositoryId, String query,
+                                                             int maxResults, double minScore) {
         InMemoryEmbeddingStore<TextSegment> store = stores.get(repositoryId);
         if (store == null) return List.of();
 
@@ -150,7 +155,7 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService {
                 EmbeddingSearchRequest.builder()
                         .queryEmbedding(queryEmbedding)
                         .maxResults(maxResults)
-                        .minScore(0.6)
+                        .minScore(minScore)
                         .build());
         return result.matches();
     }
