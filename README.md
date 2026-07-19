@@ -241,22 +241,20 @@ CodeInsight-AI/
 
 ### 方式一：Docker Compose（推荐）
 
+**环境要求：** 只需安装 Docker Desktop，无需 JDK / Node / MySQL / Redis。
+
 ```bash
 # 1. 克隆项目
-git clone https://github.com/your-username/CodeInsight-AI.git
+git clone https://github.com/wwsbb-060/CodeInsight-AI.git
 cd CodeInsight-AI
 
-# 2. 配置环境变量
-cp .env.example .env
-# 编辑 .env 文件，填入 DeepSeek API Key 等配置
+# 2. 设置 API Key 并启动
+DEEPSEEK_API_KEY=你的key EMBEDDING_API_KEY=你的key docker compose -f docker/docker-compose.yml up -d
 
-# 3. 一键启动
-docker-compose -f docker/docker-compose.yml up -d
-
-# 4. 访问
-# 前端：http://localhost:3000
-# 后端：http://localhost:8080
+# 3. 访问 http://localhost
 ```
+
+首次启动需下载镜像和编译，约 3-5 分钟。之后秒启动。
 
 ### 方式二：本地开发
 
